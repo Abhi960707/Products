@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import { FaArrowLeft, FaCartPlus, FaStar } from 'react-icons/fa'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 
 const ProductDetails = () => {
 
@@ -11,6 +12,7 @@ const ProductDetails = () => {
     const [showPopup, setShowPopup] = useState(false)
 
     const location = useLocation()
+    const { user } = useAuth()
     const { cart, cartCount, addToCart, removeFromCart, updateQuantity } = useCart()
 
     if (!location.state) {
@@ -99,12 +101,14 @@ ${openSidebar ? 'ml-[75%] sm:ml-64' : 'ml-0'}`}
                     </div>
 
                     {/* Live cart count from CartContext */}
-                    <button
-                        onClick={() => navigate('/cart')}
-                        className='bg-slate-400 text-white font-extrabold cursor-pointer px-4 sm:px-5 py-2 rounded-full font-bold text-sm sm:text-lg shadow-md hover:scale-105 transition-all duration-300' >
-                        <FaCartPlus className='inline m-1 ' />
-                        {cartCount}
-                    </button>
+                    {user?.role === 'customer' && (
+                        <button
+                            onClick={() => navigate('/cart')}
+                            className='bg-slate-400 text-white font-extrabold cursor-pointer px-4 sm:px-5 py-2 rounded-full font-bold text-sm sm:text-lg shadow-md hover:scale-105 transition-all duration-300' >
+                            <FaCartPlus className='inline m-1 ' />
+                            {cartCount}
+                        </button>
+                    )}
 
                 </nav>
 
@@ -179,48 +183,48 @@ ${openSidebar ? 'ml-[75%] sm:ml-64' : 'ml-0'}`}
 
                                 </div>
 
-                                <div className='grid grid-cols-2 lg:flex flex-wrap gap-4 mt-8'>
+                                {user?.role === 'customer' && (
+                                    <div className='grid grid-cols-2 lg:flex flex-wrap gap-4 mt-8 w-full'>
+                                        <button
+                                            onClick={handleDecrease}
+                                            className='bg-red-300 text-white px-4 py-3 rounded-xl text-xl font-bold'
+                                        >
+                                            -
+                                        </button>
 
-                                    <button
-                                        onClick={handleDecrease}
-                                        className='bg-red-300 text-white px-4 py-3 rounded-xl text-xl font-bold'
-                                    >
-                                        -
-                                    </button>
+                                        <h1 className='text-2xl font-bold flex items-center justify-center'>
+                                            {currentQty}
+                                        </h1>
 
-                                    <h1 className='text-2xl font-bold flex items-center justify-center'>
-                                        {currentQty}
-                                    </h1>
+                                        <button
+                                            onClick={handleIncrease}
+                                            className='bg-green-300 text-white px-4 py-3 rounded-xl text-xl font-bold'
+                                        >
+                                            +
+                                        </button>
 
-                                    <button
-                                        onClick={handleIncrease}
-                                        className='bg-green-300 text-white px-4 py-3 rounded-xl text-xl font-bold'
-                                    >
-                                        +
-                                    </button>
+                                        <button
+                                            onClick={handleAddToCart}
+                                            className='bg-blue-400 text-white py-3 px-6 rounded-xl font-bold shadow-md hover:scale-105 transition-all duration-300'
+                                        >
+                                            Add To Cart
+                                        </button>
 
-                                    <button
-                                        onClick={handleAddToCart}
-                                        className='bg-blue-400 text-white py-3 px-6 rounded-xl font-bold shadow-md hover:scale-105 transition-all duration-300'
-                                    >
-                                        Add To Cart
-                                    </button>
+                                        <button
+                                            onClick={handleRemove}
+                                            className='bg-gray-500 text-white py-3 px-6 rounded-xl font-bold shadow-md hover:scale-105 transition-all duration-300'
+                                        >
+                                            Remove
+                                        </button>
 
-                                    <button
-                                        onClick={handleRemove}
-                                        className='bg-gray-500 text-white py-3 px-6 rounded-xl font-bold shadow-md hover:scale-105 transition-all duration-300'
-                                    >
-                                        Remove
-                                    </button>
-
-                                    <button
-                                        onClick={() => setShowPopup(true)}
-                                        className='bg-green-400 text-white py-3 px-6 rounded-xl font-bold shadow-md hover:scale-105 transition-all duration-300 col-span-2'
-                                    >
-                                        Proceed To Buy
-                                    </button>
-
-                                </div>
+                                        <button
+                                            onClick={() => setShowPopup(true)}
+                                            className='bg-green-400 text-white py-3 px-6 rounded-xl font-bold shadow-md hover:scale-105 transition-all duration-300 col-span-2'
+                                        >
+                                            Proceed To Cart
+                                        </button>
+                                    </div>
+                                )}
 
                             </div>
 

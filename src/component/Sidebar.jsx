@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 const Sidebar = ({ openSidebar, setOpenSidebar }) => {
 
     const navigate = useNavigate()
-    const { logout } = useAuth()
+    const { role, logout } = useAuth()
 
     const handleLogout = () => {
 
@@ -15,11 +15,6 @@ const Sidebar = ({ openSidebar, setOpenSidebar }) => {
         navigate('/login')
 
     }
-
-    // const handleSignup =()=>{
-    
-    //     navigate('/register')
-    //    }
 
     return (
 
@@ -42,46 +37,73 @@ const Sidebar = ({ openSidebar, setOpenSidebar }) => {
                     <FaHome className='inline' /> Home
                 </button>
 
-                <button
-                    className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
-                    onClick={() => navigate('/home')}
-                >
-                    <FaStore className='inline' /> Products
-                </button>
+                {role === 'customer' && (
+                    <>
+                        <button
+                            className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
+                            onClick={() => navigate('/home')}
+                        >
+                            <FaStore className='inline' /> Products
+                        </button>
 
-                <button
-                    className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
-                    onClick={() => navigate('/cart')}
-                >
-                    <FaCartPlus className='inline' /> Cart
-                </button>
+                        <button
+                            className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
+                            onClick={() => navigate('/cart')}
+                        >
+                            <FaCartPlus className='inline' /> Cart
+                        </button>
 
-                <button
-                    className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
-                    onClick={() => navigate('/buyOrders')}
-                >
-                    <FaBox className='inline' /> Orders
-                </button>
+                        <button
+                            className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
+                            onClick={() => navigate('/buyorders')}
+                        >
+                            <FaBox className='inline' /> Orders
+                        </button>
+                    </>
+                )}
+
+                {role === 'shopkeeper' && (
+                    <>
+                        <button
+                            className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
+                            onClick={() => navigate('/seller-dashboard')}
+                        >
+                            <FaStore className='inline' /> Seller Dashboard
+                        </button>
+
+                        <button
+                            className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
+                            onClick={() => navigate('/add-product')}
+                        >
+                            <FaCartPlus className='inline' /> Add Product
+                        </button>
+                    </>
+                )}
+
+                {role === 'admin' && (
+                    <>
+                        <button
+                            className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
+                            onClick={() => navigate('/admin-dashboard')}
+                        >
+                            <FaStore className='inline' /> Admin Dashboard
+                        </button>
+
+                        <button
+                            className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
+                            onClick={() => navigate('/shop-register')}
+                        >
+                            <FaUserCircle className='inline' /> Create Shopkeeper
+                        </button>
+                    </>
+                )}
 
                 <button
                     className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
                     onClick={() => navigate('/profile')}
-                    // onClick={() => navigate('/shop-register')}
-
                 >
                     <FaUser className='inline' /> Profile
                 </button>
-
-<button
-                    className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'
-                    onClick={() => navigate('/shop-register')}
-                    // onClick={handleSignup}
-                   
-                    >
-                    
-                    <FaUserCircle className='inline'  /> Apply Shopkeeper
-</button>
-
 
                 <button
                     className='hover:bg-gray-300 hover:translate-x-1 p-3 rounded-2xl transition-all duration-300 flex items-center gap-3 mx-3 text-left'

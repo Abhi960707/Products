@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
-import axios from 'axios'
+import api from '../api/axiosInstance'
+import { useAuth } from '../context/AuthContext'
 import {
     FaBox,
     FaRupeeSign,
@@ -24,8 +25,7 @@ const SellerDashboard = () => {
 
     const navigate = useNavigate()
 
-    const userData =
-        JSON.parse(localStorage.getItem('user'))
+    const { user } = useAuth()
 
     useEffect(() => {
 
@@ -37,24 +37,9 @@ const SellerDashboard = () => {
 
         try {
 
-            const response = await axios.get(
+            const response = await api.get('/products/seller')
 
-                'http://localhost:5000/api/products'
-
-            )
-
-            // ONLY SELLER PRODUCTS
-
-            const sellerProducts =
-                response.data.filter(
-
-                    (product) =>
-
-                        product.sellerId === userData?.id
-
-                )
-
-            setProducts(sellerProducts)
+            setProducts(response.data)
 
             setLoading(false)
 
@@ -86,11 +71,7 @@ const SellerDashboard = () => {
 
         try {
 
-            await axios.delete(
-
-                `http://localhost:5000/api/products/${id}`
-
-            )
+            await api.delete(`/products/${id}`)
 
             fetchSellerProducts()
 
@@ -220,7 +201,7 @@ ${openSidebar ? 'ml-[75%] sm:ml-64' : 'ml-0'}`}
                     <p className='text-gray-500 mt-1'>
                         Welcome,
                         {' '}
-                        {userData?.name}
+                        {user?.name}
                     </p>
 
                 </div>

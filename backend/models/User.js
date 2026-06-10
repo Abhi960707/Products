@@ -23,7 +23,7 @@ secretkey:{
 },
 role: {
     type:String,
-    enum: ['customer','shopkeeper'],
+    enum: ['admin','shopkeeper','customer'],
     default:'customer'
 }
 })

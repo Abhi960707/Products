@@ -50,15 +50,10 @@ const Register = () => {
                 'http://localhost:5000/api/auth/register',
                 formData
             )
-
             alert(res.data.message)
-
             navigate('/login')
-
         }
-
         catch (error) {
-
             alert(
                 error.response?.data?.message ||
                 'Registration Failed'
@@ -76,7 +71,6 @@ const Register = () => {
                 onSubmit={handleSubmit}
                 className='bg-white p-8 rounded-2xl shadow-xl w-[90%] sm:w-120 flex flex-col gap-5'
             >
-
                 <h1 className='text-3xl font-bold text-center text-violet-400'>
                     Register
                 </h1>
@@ -136,9 +130,8 @@ const Register = () => {
                     <option value='customer'>
                         Customer
                     </option>
-
-                    <option value='shopkeeper'>
-                        Shopkeeper
+                    <option value='admin'>
+                        Admin
                     </option>
 
                 </select>

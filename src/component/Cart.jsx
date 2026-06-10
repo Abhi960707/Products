@@ -7,13 +7,13 @@ import Sidebar from './Sidebar'
 import { useCart } from '../context/CartContext'
 import api from '../api/axiosInstance'
 // import {useSelector} from 'react-redux'
-import {useDispatch} from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { placeOrder } from '../redux/slices/orderSlice'
 
 const Cart = () => {
 
     const navigate = useNavigate()
-    const dispatch =useDispatch()
+    const dispatch = useDispatch()
     const [openSidebar, setOpenSidebar] = useState(false)
     const [addressInput, setAddressInput] = useState('')
     const [showPopup, setShowPopup] = useState(false)
@@ -54,7 +54,7 @@ const Cart = () => {
         if (selectedBuyItems.length === 0) {
             alert('Please select at least one product')
             return
-        }   
+        }
 
         setPlacingOrder(true)
 
@@ -70,7 +70,7 @@ const Cart = () => {
                 quantity: item.quantity
             }))
 
-           const res= await api.post('/orders',{  
+            const res = await api.post('/orders', {
                 items: orderItems,
                 address: addressInput.trim()
             })
@@ -101,7 +101,7 @@ const Cart = () => {
 
     }
 
-// const cartItems = useSelector(state => state.cart.cartItems)
+    // const cartItems = useSelector(state => state.cart.cartItems)
 
     const removeItem = (productId) => {
         removeFromCart(productId)
@@ -120,6 +120,8 @@ const Cart = () => {
             removeFromCart(productId)
         }
     }
+
+
 
     return (
 
@@ -181,7 +183,7 @@ ${openSidebar ? 'ml-[75%] sm:ml-64' : 'ml-0'}`}
                                 <>
 
                                     {
-                                        cart.map((item,index) => (
+                                        cart.map((item, index) => (
 
                                             <div
                                                 // key={item.productId}
@@ -293,7 +295,7 @@ ${openSidebar ? 'ml-[75%] sm:ml-64' : 'ml-0'}`}
 
                             {
                                 selectedBuyItems.length > 0 ? (
-                                    selectedBuyItems.map((item,index) => (
+                                    selectedBuyItems.map((item, index) => (
 
                                         <div
                                             key={item.productId}

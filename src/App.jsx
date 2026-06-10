@@ -12,7 +12,11 @@ import AddProduct from './component/AddProduct'
 import SellerDashboard from './component/SellerDashboard'
 import ShopRegister from './component/ShopRegister'
 import ForgetPassword from './component/ForgetPassword' 
+import AdminDashboard from './component/AdminDashboard'
+import AdminRoute from './component/AdminRoute'
+import SellerRoute from './component/SellerRoute'
 // import Myproduct from './component/Myproduct'
+
 
 import {
     BrowserRouter,
@@ -70,9 +74,8 @@ const PublicRoute = ({ children }) => {
 
 }
 
-// ─────────────────────────────────────────────────────────
 // AppRoutes: defined inside providers so useAuth() works
-// ─────────────────────────────────────────────────────────
+
 const AppRoutes = () => {
 
     return (
@@ -109,9 +112,9 @@ const AppRoutes = () => {
             path='/shop-register'
             element={
              
-                <ProtectedRoute>
+                <AdminRoute>
                     <ShopRegister />
-                </ProtectedRoute>
+                </AdminRoute>
                 
             }
 />
@@ -134,6 +137,16 @@ element= {
                     <ProtectedRoute>
                         <Dashboard />
                     </ProtectedRoute>
+                }
+            />
+
+            {/* Admin Dashboard */}
+            <Route
+                path='/admin-dashboard'
+                element={
+                    <AdminRoute>
+                        <AdminDashboard />
+                    </AdminRoute>
                 }
             />
 
@@ -185,9 +198,9 @@ element= {
             <Route
                 path='/add-product'
                 element={
-                    <ProtectedRoute>
+                    <SellerRoute>
                         <AddProduct />
-                    </ProtectedRoute>
+                    </SellerRoute>
                 }
             />
 
@@ -203,9 +216,9 @@ element= {
             <Route
                 path='/seller-dashboard'
                 element={
-                    <ProtectedRoute>
+                    <SellerRoute>
                         <SellerDashboard />
-                    </ProtectedRoute>
+                    </SellerRoute>
                 }
             />
 

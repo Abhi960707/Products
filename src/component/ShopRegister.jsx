@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import api from '../api/axiosInstance'
 import { useNavigate, Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const ShopRegister = () => {
 
     const navigate = useNavigate()
+    const { token } = useAuth()
 
     const [formData, setFormData] = useState({
         name: '',
@@ -28,42 +30,45 @@ const ShopRegister = () => {
 
         e.preventDefault()
 
+        const { name, email, password, confirmPassword, secretkey } = formData;
+
         if (
-            !formData.name ||
-            !formData.email ||
-            !formData.password ||
-            !formData.confirmPassword ||
-            !formData.secretkey
+            !name ||
+            !email ||
+            !password ||
+            !confirmPassword ||
+            !secretkey
         ) {
             alert('All Fields are Required')
             return
         }
 
-        if (formData.password !== formData.confirmPassword) {
+        if (password !== confirmPassword) {
             alert('Passwords do not match')
             return
         }
 
         try {
 
-            const res = await axios.post(
-                'http://localhost:5000/api/auth/register',
-                formData
+            const res = await api.post(
+                '/auth/create-shopkeeper',
+                {
+                    name,
+                    email,
+                    password,
+                    secretkey
+                }
             )
 
             alert(res.data.message)
-
-            navigate('/login')
-
+            navigate('/Dashboard')
         }
 
         catch (error) {
-
             alert(
                 error.response?.data?.message ||
                 'Registration Failed'
             )
-
         }
 
     }
@@ -140,9 +145,9 @@ const ShopRegister = () => {
                         Shopkeeper
                     </option>
 
-                    <option value='customer'>
+                    {/* <option value='customer'>
                         Customer
-                    </option>
+                    </option> */}
                 </select>
 
 

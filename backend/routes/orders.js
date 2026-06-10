@@ -65,36 +65,38 @@ router.post('/', auth, async (req, res) => {
         await newOrder.save()
         for (const item of items) {
 
-    let product = null
+            let product = null
 
-    // SHOPKEEPER PRODUCT
+            // SHOPKEEPER PRODUCT
 
-    if (
+            if (
 
-        String(item.productId).length > 10
+                String(item.productId).length > 10
 
-    ) {
+            ) {
 
-        product =
-        await Product.findById(
-            item.productId
-        )
+                product =
+                    await Product.findById(
+                        item.productId
+                    )
 
-    }
+            }
 
-    // UPDATE STOCK & SOLD
+            // UPDATE STOCK & SOLD
 
-    if (product) {
+            if (product) {
+                product.stock =
+                    Number(product.stock || 0)
+                    - Number(item.quantity)
 
-        product.stock -= item.quantity
+                product.sold =
+                    Number(product.sold || 0)
+                    + Number(item.quantity)
+                await product.save()
 
-        product.sold += item.quantity
+            }
 
-        await product.save()
-
-    }
-
-}
+        }
         // Remove ordered items from the user's cart
         const orderedProductIds = items.map(i => i.productId)
 
@@ -145,5 +147,10 @@ router.get('/:id', auth, async (req, res) => {
     }
 
 })
+
+// Payment Gateway
+// 
+
+
 
 module.exports = router

@@ -1,16 +1,17 @@
 import React,
 { useState } from 'react'
 import Sidebar from './Sidebar'
-import axios from 'axios'
+import api from '../api/axiosInstance'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import {
     FaArrowLeft,
     FaUser
 } from 'react-icons/fa'
 const AddProduct = () => {
     const location = useLocation()
-        const [openSidebar, setOpenSidebar] = useState(false)
-    
+    const [openSidebar, setOpenSidebar] = useState(false)
+
     const editProduct = location.state?.product
     const navigate = useNavigate()
 
@@ -33,10 +34,7 @@ const AddProduct = () => {
 
 
 
-    const userData =
-        JSON.parse(
-            localStorage.getItem('user')
-        )
+    const { user } = useAuth()
 
     const handleChange = (e) => {
 
@@ -98,22 +96,20 @@ const AddProduct = () => {
                 if (editProduct) {
                     // UPDATE PRODUCT
 
-                    await axios.put(
-                        `http://localhost:5000/api/products/${editProduct._id}`,
+                    await api.put(
+                        `/products/${editProduct._id}`,
                         {
                             title: formData.title,
                             price: Number(formData.price),
                             description: formData.description,
                             category: formData.category,
                             image: formData.image,
-                            stock: Number(formData.stock),
-                            sold: formData.sold,
-                            rating: formData.rating,
-                            sellerId: userData.id
+                            stock: Number(formData.stock)
                         }
                     )
 
                     alert('Product Updated Successfully')
+                    navigate('/seller-dashboard')
 
                 }
 
@@ -121,9 +117,9 @@ const AddProduct = () => {
 
                     // ADD PRODUCT
 
-                    await axios.post(
+                    await api.post(
 
-                        'http://localhost:5000/api/products',
+                        '/products',
 
                         {
 
@@ -137,22 +133,14 @@ const AddProduct = () => {
 
                             image: formData.image,
 
-                            stock: Number(formData.stock),
-
-                            sold: 0,
-
-                            rating: {
-                                rate: 4.5,
-                                count: 0
-                            },
-
-                            sellerId: userData.id
+                            stock: Number(formData.stock)
 
                         }
 
                     )
 
                     alert('Product Published')
+                    navigate('/seller-dashboard')
 
                 }
 
@@ -167,7 +155,7 @@ const AddProduct = () => {
         }
 
     return (
- <div className='min-h-screen bg-gray-100 overflow-y-auto scrollbar-hide'>
+        <div className='min-h-screen bg-gray-100 overflow-y-auto scrollbar-hide'>
             <div
                 onClick={() =>
                     openSidebar && setOpenSidebar(false)
@@ -215,23 +203,23 @@ ${openSidebar ? 'ml-[75%] sm:ml-64' : 'ml-0'}`}
                     Back to Home
 
                 </button> */}
-        
-        
 
-        <div className=' bg-gray-200'>
-  <button
-                    onClick={() => navigate('/home')}
-                    className=' cursor-pointer text-blue-500 px-4 py-1 rounded-xl to-transparent '
-                >
-                    <FaArrowLeft className='inline mr-2 ' />
-                    Back to Home
 
-                </button>
-            <form
 
-                onSubmit={handleSubmit}
+                <div className=' bg-gray-200'>
+                    <button
+                        onClick={() => navigate('/home')}
+                        className=' cursor-pointer text-blue-500 px-4 py-1 rounded-xl to-transparent '
+                    >
+                        <FaArrowLeft className='inline mr-2 ' />
+                        Back to Home
 
-                className='
+                    </button>
+                    <form
+
+                        onSubmit={handleSubmit}
+
+                        className='
 max-w-3xl
 mx-auto
 bg-white
@@ -243,42 +231,42 @@ flex-col
 gap-4
 '>
 
-                <h1
-                    className='
+                        <h1
+                            className='
 text-3xl
 font-bold
 justify-center flex
 '>
-                    Add Product
-                </h1>
+                            Add Product
+                        </h1>
 
-                <input
-                    type='text'
-                    name='title'
-                    value={formData.title}
-                    placeholder='Title'
-                    onChange={handleChange}
-                    className='border p-3 rounded-xl'
-                />
+                        <input
+                            type='text'
+                            name='title'
+                            value={formData.title}
+                            placeholder='Title'
+                            onChange={handleChange}
+                            className='border p-3 rounded-xl'
+                        />
 
-                <input
-                    type='number'
-                    name='price'
-                    value={formData.price}
-                    placeholder='Price'
-                    onChange={handleChange}
-                    className='border p-3 rounded-xl'
-                />
+                        <input
+                            type='number'
+                            name='price'
+                            value={formData.price}
+                            placeholder='Price'
+                            onChange={handleChange}
+                            className='border p-3 rounded-xl'
+                        />
 
-                <textarea
-                    name='description'
-                    placeholder='Description'
-                    value={formData.description}
-                    onChange={handleChange}
-                    className='border p-3 rounded-xl'
-                />
+                        <textarea
+                            name='description'
+                            placeholder='Description'
+                            value={formData.description}
+                            onChange={handleChange}
+                            className='border p-3 rounded-xl'
+                        />
 
-                {/* <input
+                        {/* <input
                     type='text'
                     name='category'
                     placeholder='Category'
@@ -286,15 +274,15 @@ justify-center flex
                     onChange={handleChange}
                     className='border p-3 rounded-xl'
                 /> */}
-                <select
+                        <select
 
-                    name='category'
+                            name='category'
 
-                    value={formData.category}
+                            value={formData.category}
 
-                    onChange={handleChange}
+                            onChange={handleChange}
 
-                    className='
+                            className='
 text-black
 p-3
 border
@@ -303,116 +291,116 @@ bg-white
 text-md
 '
 
-                >
+                        >
 
-                    <option value="">
-                        Select Category
-                    </option>
+                            <option value="">
+                                Select Category
+                            </option>
 
-                    <option value="electronics">
-                        Electronics
-                    </option>
+                            <option value="electronics">
+                                Electronics
+                            </option>
 
-                    <option value="gaming">
-                        Gaming
-                    </option>
+                            <option value="gaming">
+                                Gaming
+                            </option>
 
-                    <option value="shoes">
-                        Shoes
-                    </option>
+                            <option value="shoes">
+                                Shoes
+                            </option>
 
-                    <option value="bags">
-                        Bags
-                    </option>
+                            <option value="bags">
+                                Bags
+                            </option>
 
-                    <option value="watches">
-                        Watches
-                    </option>
+                            <option value="watches">
+                                Watches
+                            </option>
 
-                    <option value="photography">
-                        Photography
-                    </option>
+                            <option value="photography">
+                                Photography
+                            </option>
 
-                    <option value="women clothing">
-                        Women Clothing
-                    </option>
+                            <option value="women clothing">
+                                Women Clothing
+                            </option>
 
-                    <option value="men clothing">
-                        Men Clothing
-                    </option>
+                            <option value="men clothing">
+                                Men Clothing
+                            </option>
 
-                    <option value="jewelry">
-                        Jewelry
-                    </option>
+                            <option value="jewelry">
+                                Jewelry
+                            </option>
 
-                    <option value="kitchen">
-                        Kitchen
-                    </option>
+                            <option value="kitchen">
+                                Kitchen
+                            </option>
 
-                    <option value="books">
-                        Books
-                    </option>
+                            <option value="books">
+                                Books
+                            </option>
 
-                    <option value="fitness">
-                        Fitness
-                    </option>
+                            <option value="fitness">
+                                Fitness
+                            </option>
 
-                    <option value="sports">
-                        Sports
-                    </option>
+                            <option value="sports">
+                                Sports
+                            </option>
 
-                    <option value="furniture">
-                        Furniture
-                    </option>
+                            <option value="furniture">
+                                Furniture
+                            </option>
 
-                    <option value="mobile accessories">
-                        Mobile Accessories
-                    </option>
+                            <option value="mobile accessories">
+                                Mobile Accessories
+                            </option>
 
-                    <option value="fashion accessories">
-                        Fashion Accessories
-                    </option>
+                            <option value="fashion accessories">
+                                Fashion Accessories
+                            </option>
 
-                    <option value="beauty">
-                        Beauty
-                    </option>
+                            <option value="beauty">
+                                Beauty
+                            </option>
 
-                    <option value="kids">
-                        Kids
-                    </option>
+                            <option value="kids">
+                                Kids
+                            </option>
 
-                    <option value="home decor">
-                        Home Decor
-                    </option>
+                            <option value="home decor">
+                                Home Decor
+                            </option>
 
-                    <option value="office essentials">
-                        Office Essentials
-                    </option>
+                            <option value="office essentials">
+                                Office Essentials
+                            </option>
 
-                </select>
+                        </select>
 
-                <input
-                    type='text'
-                    name='image'
-                    value={formData.image}
-                    placeholder='Image URL'
-                    onChange={handleChange}
-                    className='border p-3 rounded-xl'
-                />
+                        <input
+                            type='text'
+                            name='image'
+                            value={formData.image}
+                            placeholder='Image URL'
+                            onChange={handleChange}
+                            className='border p-3 rounded-xl'
+                        />
 
-                <input
-                    type='number'
-                    name='stock'
-                    value={formData.stock}
-                    placeholder='Stock'
-                    onChange={handleChange}
-                    className='border p-3 rounded-xl'
-                />
-            
+                        <input
+                            type='number'
+                            name='stock'
+                            value={formData.stock}
+                            placeholder='Stock'
+                            onChange={handleChange}
+                            className='border p-3 rounded-xl'
+                        />
 
-                <button
-                    type='submit'
-                    className='
+
+                        <button
+                            type='submit'
+                            className='
 bg-blue-600
 hover:bg-blue-700
 text-white
@@ -422,14 +410,14 @@ w-30
 justify-center
 '>
 
-                    Publish Product
+                            Publish Product
 
-                </button>
+                        </button>
 
-            </form>
+                    </form>
 
-        </div>
-        </div>
+                </div>
+            </div>
         </div>
 
     )

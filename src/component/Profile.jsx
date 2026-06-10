@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import api from '../api/axiosInstance'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import { useAuth } from '../context/AuthContext'
@@ -67,12 +67,11 @@ const Profile = () => {
 
             }
 
-            const res = await axios.put(
+            const res = await api.put(
 
-                'http://localhost:5000/api/auth/change-password',
+                '/auth/change-password',
 
                 {
-                    email: user?.email,
                     currentPassword,
                     newPassword
                 }

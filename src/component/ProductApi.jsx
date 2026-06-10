@@ -4,6 +4,7 @@ import Sidebar from './Sidebar'
 import { FaBox, FaCartPlus, FaSearch, FaStar, FaUser } from 'react-icons/fa'
 import logo from '../assets/logo.png'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
 import {useDispatch} from 'react-redux'
 import {addToCart as addToCartRedux} from '../redux/slices/cartSlice'
@@ -22,11 +23,7 @@ const ProductApi = () => {
     
     const location = useLocation()
     const { cartCount, addToCart:addToCartContext } = useCart()
-    const userData =
-
-        JSON.parse(
-            localStorage.getItem('user')
-        )
+    const { user } = useAuth()
 
     useEffect(() => {
 
@@ -217,23 +214,27 @@ ${openSidebar
 
                     </div>
 
-                    <div className='bg-green-600 px-3 py-1 rounded-full flex justify-center items-center '>
-                        <button
-                            onClick={() => navigate('/buyorders')}
-                            className='text-white font-extrabold cursor-pointer ' >
-                            <FaBox className='inline m-1' />
-                        </button>
+                    {user?.role === 'customer' && (
+                        <>
+                            <div className='bg-green-600 px-3 py-1 rounded-full flex justify-center items-center '>
+                                <button
+                                    onClick={() => navigate('/buyorders')}
+                                    className='text-white font-extrabold cursor-pointer ' >
+                                    <FaBox className='inline m-1' />
+                                </button>
 
-                    </div>
+                            </div>
 
-                    <div className=' bg-sky-400 px-3 py-1 rounded-full flex justify-center items-center'>
-                        <button
-                            onClick={() => navigate('/cart')}
-                            className='text-white font-extrabold cursor-pointer' >
-                            <FaCartPlus className='inline m-1' />
-                            {cartCount}
-                        </button>
-                    </div>
+                            <div className=' bg-sky-400 px-3 py-1 rounded-full flex justify-center items-center'>
+                                <button
+                                    onClick={() => navigate('/cart')}
+                                    className='text-white font-extrabold cursor-pointer' >
+                                    <FaCartPlus className='inline m-1' />
+                                    {cartCount}
+                                </button>
+                            </div>
+                        </>
+                    )}
                     <div className='bg-slate-400 px-3 py-1 rounded-full flex justify-center items-center'>
                         <button
                             onClick={() => navigate('/profile')}
@@ -293,15 +294,15 @@ ${openSidebar
                                     Price : ₹ {product.price}
                                 </h1>
 
-                                <div className='flex flex-col sm:flex-row gap-6 justify-center items-center'>
-
-                                    <button
-                                        onClick={(e) => handleAddToCart(e, product)}
-                                        className='bg-blue-400 text-white px-3 py-2 rounded-md w-full mt-2 ml-' >
-                                        <FaCartPlus className='inline mb-1 m-1 ' />Add Cart
-                                    </button>
-
-                                </div>
+                                    {user?.role === 'customer' && (
+                                        <div className='flex flex-col sm:flex-row gap-6 justify-center items-center w-full'>
+                                            <button
+                                                onClick={(e) => handleAddToCart(e, product)}
+                                                className='bg-blue-400 text-white px-3 py-2 rounded-md w-full mt-2' >
+                                                <FaCartPlus className='inline mb-1 m-1 ' />Add Cart
+                                            </button>
+                                        </div>
+                                    )}
                             </div>
 
                         ))

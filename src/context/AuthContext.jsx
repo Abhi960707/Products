@@ -1,25 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import api from '../api/axiosInstance'
-
-/**
- * AuthContext
- *
- * Provides authentication state and actions across the entire app.
- * - Fetches user profile from /api/profile on app load / token change
- * - Handles refresh-without-logout: if token valid → stay logged in
- */
+import { useDispatch } from 'react-redux'
+import { loginSuccess, logout as reduxLogout } from '../redux/slices/authSlice'
 
 const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
 
+    const dispatch = useDispatch()
     const [token, setToken] = useState(localStorage.getItem('token'))
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState(() => {
+        try {
+            const savedUser = localStorage.getItem('user')
+            return savedUser ? JSON.parse(savedUser) : null
+        } catch (e) {
+            return null
+        }
+    })
     const [loading, setLoading] = useState(true) // prevents flash of redirect on refresh
 
-    // ── Fetch user profile whenever token changes ────────
+    //Fetch user profile also token changes
     useEffect(() => {
-
         const fetchProfile = async () => {
 
             if (!token) {
@@ -29,15 +30,28 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-
-                const res = await api.get('/profile')
+                  console.log("TOKEN =", token)
+                  
+                const res = await api.get('/auth/profile')
                 setUser(res.data)
+                localStorage.setItem('user', JSON.stringify(res.data))
+                localStorage.setItem('role', res.data.role)
+                dispatch(loginSuccess({
+                    user: res.data,
+                    token,
+                    role: res.data.role
+                }))
+                console.log("User Data:", res.data)
+                console.log("Role:", res.data.role)
 
             } catch (error) {
 
-                // Token invalid or expired — clear it
+                // Token invalidorexpire
                 console.error('Profile fetch failed:', error.message)
                 localStorage.removeItem('token')
+                localStorage.removeItem('user')
+                localStorage.removeItem('role')
+                dispatch(reduxLogout())
                 setToken(null)
                 setUser(null)
 
@@ -51,36 +65,47 @@ export const AuthProvider = ({ children }) => {
 
         fetchProfile()
 
-    }, [token])
+    }, [token, dispatch])
 
-    // ── Login: store token, trigger profile fetch ────────
-    const login = (newToken) => {
+    //Login store token
+    const login = (newToken, newUser) => {
 
         localStorage.setItem('token', newToken)
+        if (newUser) {
+            localStorage.setItem('user', JSON.stringify(newUser))
+            localStorage.setItem('role', newUser.role)
+            setUser(newUser)
+            dispatch(loginSuccess({
+                user: newUser,
+                token: newToken,
+                role: newUser.role
+            }))
+        }
         setToken(newToken)
-        // useEffect above will fire and fetch profile
+        setLoading(false)
 
     }
 
-    // ── Logout: clear token and user state ───────────────
+    // Logout: clear token and user state
     const logout = () => {
 
         localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('role')
+        dispatch(reduxLogout())
         setToken(null)
         setUser(null)
         // No window.location.reload() needed — state change triggers re-render
 
     }
 
+    const role = user?.role || null
     return (
 
-        <AuthContext.Provider value={{ token, user, loading, login, logout }}>
+        <AuthContext.Provider value={{ token, user, role, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
-
     )
-
 }
 
-// Custom hook for convenience
 export const useAuth = () => useContext(AuthContext)

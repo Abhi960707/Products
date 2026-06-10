@@ -2,64 +2,107 @@ const express = require('express')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
-const auth=require('../middleware/authMiddleware')
+const auth = require('../middleware/authMiddleware')
+const isAdmin = require('../middleware/isAdmin')
 
 const router = express.Router()
 
 router.post('/register', async (req, res) => {
 
     try {
-
-        const { name, email, password,secretkey, role } = req.body
-
+        const { name, email, password, secretkey, role } = req.body
         const existingUser =
             await User.findOne({ email })
 
         if (existingUser) {
-
             return res.status(400).json({
                 message: 'User already exists'
             })
         }
-
         const hashedPassword =
             await bcrypt.hash(password, 10)
-
+        const finalRole = (role === 'admin') ? 'admin' : 'customer'
         const newUser = new User({
             name,
             email,
             password: hashedPassword,
             secretkey,
-            role
-
+            role: finalRole
         })
 
         await newUser.save()
-
         res.status(201).json({
             message: 'Registration Successful'
         })
-
     }
 
     catch (error) {
-
         res.status(500).json({
             message: 'Server Error'
         })
-
     }
 
 })
+
+//Create Shopkeeper
+router.post(
+    '/create-shopkeeper',
+    auth,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            const {
+                name,
+                email,
+                password,
+                secretkey
+            } = req.body
+
+            const existingUser =
+                await User.findOne({ email })
+            if (existingUser) {
+                return res.status(400).json({
+                    message: 'User already exists'
+                })
+            }
+
+            const hashedPassword =
+                await bcrypt.hash(password, 10)
+            const shopkeeper = new User({
+                name,
+                email,
+                password: hashedPassword,
+                secretkey,
+                role: 'shopkeeper'
+            })
+
+            await shopkeeper.save()
+            res.status(201).json({
+                message: 'Shopkeeper Created Successfully'
+            })
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({
+                message: 'Shopkeeper Not Created'
+            })
+        }
+    }
+)
+
+
 
 router.post('/login', async (req, res) => {
 
     try {
 
         const { email, password } = req.body
-        const user =
-        await User.findOne({ email })
-       {/*console.log("USER :", user)     // This are terminal chaeck username **/} 
+
+        const user = await User.findOne({ email })
+
+       {/* console.log("EMAIL =", email)
+        console.log("USER =", user)  */}
 
         if (!user) {
 
@@ -69,12 +112,13 @@ router.post('/login', async (req, res) => {
 
         }
 
-        const isMatch =
-            await bcrypt.compare(
-                password,
-                user.password
-            )
-  {/*console.log("PASSWORD MATCH :", isMatch)   // This are terminal chaeck password **/} 
+        const isMatch = await bcrypt.compare(
+            password,
+            user.password
+        )
+
+       {/* console.log("MATCH =", isMatch) */}
+
         if (!isMatch) {
 
             return res.status(400).json({
@@ -84,15 +128,12 @@ router.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign(
-
-            { id: user._id },
-
-            //.meadded 
-          process.env.JWT_SECRET,
-            // "mysecretkey",
-         
+            {
+                id: user._id,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
             { expiresIn: '7d' }
-
         )
 
         res.status(200).json({
@@ -102,14 +143,13 @@ router.post('/login', async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role:user.role
+                role: user.role
             }
-
         })
 
-    }
+    } catch (error) {
 
-    catch (error) {
+        console.log(error)
 
         res.status(500).json({
             message: 'Server Error'
@@ -123,13 +163,13 @@ router.post('/login', async (req, res) => {
 
 
 
-router.put('/change-password', async (req, res) => {
+router.put('/change-password', auth, async (req, res) => {
 
     try {
 
-        const { email, currentPassword, newPassword } = req.body
+        const { currentPassword, newPassword } = req.body
 
-        const user = await User.findOne({ email })
+        const user = await User.findById(req.user.id)
 
         if (!user) {
 
@@ -176,36 +216,46 @@ router.put('/change-password', async (req, res) => {
 
 })
 
-router.get('/profile', auth,async (req, res) => {
+router.get('/profile', auth, async (req, res) => {
 
     try {
-
         const userId = req.user.id
-
         const user = await User.findById(userId)
             .select('-password')
-
         if (!user) {
 
             return res.status(404).json({
                 message: 'User Not Found'
             })
-
         }
-
         res.status(200).json(user)
-
     }
 
     catch (error) {
-
         res.status(500).json({
             message: 'Server Error'
         })
-
     }
-
 })
+
+
+//
+router.post('/forget-passkey',async (req,res)=>{
+    try {
+        const {email}=req.body
+        const user = await User.findOne({email})
+res.status(200).json({
+    message:'User Not Founded why are this '
+})
+        } catch (error) {
+        res.status(500).json({
+            message:'server error'
+        })
+    }
+})
+
+//routes
+
 
 router.post('/forget-password', async (req, res) => {
 
@@ -221,9 +271,8 @@ router.post('/forget-password', async (req, res) => {
         if (!user) {
 
             return res.status(404).json({
-                message: 'User Not Found'
+                message:'User Not Found'
             })
-
         }
 
         // Secret key check
@@ -303,6 +352,37 @@ router.put('/reset-password', async (req, res) => {
 
     }
 
+})
+
+// Get Admin Stats
+router.get('/admin-stats', auth, isAdmin, async (req, res) => {
+    try {
+        const totalCustomers = await User.countDocuments({ role: 'customer' })
+        const totalShopkeepers = await User.countDocuments({ role: 'shopkeeper' })
+
+        const Product = require('../models/Product')
+        const Order = require('../models/Order')
+
+        const totalProducts = await Product.countDocuments()
+        const totalOrders = await Order.countDocuments()
+
+        const recentShopkeepers = await User.find({ role: 'shopkeeper' })
+            .select('-password -secretkey')
+            .sort({ _id: -1 })
+            .limit(5)
+
+        res.status(200).json({
+            stats: {
+                totalCustomers,
+                totalShopkeepers,
+                totalProducts,
+                totalOrders
+            },
+            recentShopkeepers
+        })
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' })
+    }
 })
 
 module.exports = router

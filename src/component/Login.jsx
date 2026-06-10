@@ -1,5 +1,3 @@
-import {loginSuccess} from '../redux/slices/authSlice'
-import {useDispatch} from 'react-redux'
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
@@ -8,7 +6,6 @@ import { useAuth } from '../context/AuthContext'
 const Login = () => {
 
     const navigate = useNavigate()
-   const dispatch = useDispatch()
     const { login } = useAuth()
     const [formData, setFormData] = useState({
         email: '',
@@ -38,23 +35,11 @@ const Login = () => {
         try {
 
             const res = await axios.post(
-                // dispatch(loginSuccess({
-                //     user:res.data.user,
-                //     token:res.data.token
-                // }))
-                // console.log('Redux user:', res.data.user)
                 'http://localhost:5000/api/auth/login',
                 formData
             )
-               dispatch(loginSuccess({
-                    user:res.data.user,
-                    token:res.data.token
-                }))
-                console.log('Redux user:', res.data.user)
-
-          
-            login(res.data.token)
-            localStorage.setItem('user', JSON.stringify(res.data.user))
+            
+            login(res.data.token, res.data.user)
 
             navigate('/Dashboard')
 
@@ -65,7 +50,6 @@ const Login = () => {
             )
 
         } finally {
-
             setIsLoading(false)
 
         }

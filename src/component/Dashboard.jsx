@@ -1,76 +1,84 @@
 import { useSelector } from 'react-redux'
-import React,{useEffect,useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-FaSearch,
-FaBox,
-FaCartPlus,
-FaUser,
-FaShoppingBag
+    FaSearch,
+    FaBox,
+    FaCartPlus,
+    FaUser,
+    FaShoppingBag
 } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import logo from '../assets/logo.png'
 import { useCart } from '../context/CartContext'
 
-const Dashboard=()=>{
+const Dashboard = () => {
 
-const navigate=useNavigate()
+    const navigate = useNavigate()
 
-const user=useSelector(
-state=>state.auth.user
-)
+    const user = useSelector(
+        state => state.auth.user
+    )
 
-const cartItems=useSelector(
-state=>state.cart.cartItems
-)
+    const cartItems = useSelector(
+        state => state.cart.cartItems
+    )
 
-const products=useSelector(
-state=>state.product.products
-)
+    const products = useSelector(
+        state => state.product.products
+    )
 
-const cartCount=cartItems.reduce(
-(total,item)=>total+item.quantity,
-0
-)
+    const cartCount = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    )
 
-console.log("Redux User Name :",user)
+    console.log("Redux User Name :", user)
 
-console.log("Redux Cart Adition :",cartItems)
+    console.log("Redux Cart Adition :", cartItems)
 
-console.log("Cart Counted :",cartCount)
+    console.log("Cart Counted :", cartCount)
 
-console.log("Redux Products :",products)
+    console.log("Redux Products :", products)
 
-useEffect(()=>{
+    useEffect(() => {
+        if (user) {
+            if (user.role === 'admin') {
+                navigate('/admin-dashboard')
+            } else if (user.role === 'shopkeeper') {
+                navigate('/seller-dashboard')
+            }
+        }
+    }, [user, navigate])
 
-console.log(
-"Redux cart from store in Dashboard :",
-cartItems
-)
+    useEffect(() => {
 
-},[cartItems])
+        console.log(
+            "Redux cart from store in Dashboard :",
+            cartItems
+        )
 
-const UserData=JSON.parse(
-localStorage.getItem('user')
-)
+    }, [cartItems])
 
-const [current,setCurrent]=useState(0)
+    const UserData = user
 
-const [openSidebar,setOpenSidebar]=
-useState(false)
+    const [current, setCurrent] = useState(0)
 
-const [search,setSearch]=
-useState('')
+    const [openSidebar, setOpenSidebar] =
+        useState(false)
 
-const [filter,setFilter]=
-useState('all')
+    const [search, setSearch] =
+        useState('')
 
-
+    const [filter, setFilter] =
+        useState('all')
 
 
 
 
-//   Sliders imge
+
+
+    //   Sliders imge
     const sliderData = [
         {
             image: 'https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?q=80&w=1600&auto=format&fit=crop',
@@ -363,104 +371,104 @@ useState('all')
                             className='w-full pl-10 pr-4 py-2 rounded-xl text-black border bg-white outline-none text-sm'
                         />
                     </div>
-            
-{
-    UserData?.role === 'customer'
 
-    &&
+                    {
+                        UserData?.role === 'customer'
 
-    [
+                        &&
 
-        {
-            icon: <FaBox />,
-            label: 'Orders',
-            path: '/buyorders',
-            color: 'bg-green-600'
-        },
+                        [
 
-        {
-            icon: <FaCartPlus />,
-            label: `Cart ${cartCount}`,
-            path: '/cart',
-            color: 'bg-sky-400'
-        },
+                            {
+                                icon: <FaBox />,
+                                label: 'Orders',
+                                path: '/buyorders',
+                                color: 'bg-green-600'
+                            },
 
-        {
-            icon: <FaUser />,
-            label: 'Profile',
-            path: '/profile',
-            color: 'bg-slate-400'
-        }
+                            {
+                                icon: <FaCartPlus />,
+                                label: `Cart ${cartCount}`,
+                                path: '/cart',
+                                color: 'bg-sky-400'
+                            },
 
-    ].map(({ icon, label, path, color }) => (
+                            {
+                                icon: <FaUser />,
+                                label: 'Profile',
+                                path: '/profile',
+                                color: 'bg-slate-400'
+                            }
 
-        <button
-            key={path}
-            onClick={() => navigate(path)}
-            className={`${color} hover:opacity-90 text-white px-4 py-2 rounded-xl flex items-center gap-1 text-sm font-semibold transition-all duration-200`}
-        >
+                        ].map(({ icon, label, path, color }) => (
 
-            {icon}
+                            <button
+                                key={path}
+                                onClick={() => navigate(path)}
+                                className={`${color} hover:opacity-90 text-white px-4 py-2 rounded-xl flex items-center gap-1 text-sm font-semibold transition-all duration-200`}
+                            >
 
-            <span className='hidden sm:inline'>
-                {label}
-            </span>
+                                {icon}
 
-        </button>
+                                <span className='hidden sm:inline'>
+                                    {label}
+                                </span>
 
-    ))
+                            </button>
 
-}
+                        ))
 
-{
-    UserData?.role === 'shopkeeper'
+                    }
 
-    &&
+                    {
+                        UserData?.role === 'shopkeeper'
 
-    [
+                        &&
 
-        {
-            label: 'Seller Dashboard',
-            path: '/seller-dashboard',
-            color: 'bg-purple-500'
-        },
-        // {
-        //     label: 'Add Product',
-        //     path: '/add-product',
-        //     color: 'bg-orange-500'
-        // },
+                        [
 
-        // {
-        //     label: 'My Products',
-        //     path: '/my-products',
-        //     color: 'bg-pink-500'
-        // },
-         {
-            icon: <FaUser />,
-            label: 'Profile',
-            path: '/profile',
-            color: 'bg-slate-400'
-            // width:'20px'
-        }
+                            {
+                                label: 'Seller Dashboard',
+                                path: '/seller-dashboard',
+                                color: 'bg-purple-500'
+                            },
+                            // {
+                            //     label: 'Add Product',
+                            //     path: '/add-product',
+                            //     color: 'bg-orange-500'
+                            // },
 
-    ].map(({ icon,label, path, color }) => (
+                            // {
+                            //     label: 'My Products',
+                            //     path: '/my-products',
+                            //     color: 'bg-pink-500'
+                            // },
+                            {
+                                icon: <FaUser />,
+                                label: 'Profile',
+                                path: '/profile',
+                                color: 'bg-slate-400'
+                                // width:'20px'
+                            }
 
-        <button
-            key={path}
-            onClick={() => navigate(path)}
-            className={`${color} hover:opacity-90 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200`}
-        >
+                        ].map(({ icon, label, path, color }) => (
 
-            {icon}
-            <span className='hidden sm:inline'>
-                {label}
-            </span>
+                            <button
+                                key={path}
+                                onClick={() => navigate(path)}
+                                className={`${color} hover:opacity-90 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200`}
+                            >
 
-        </button>
+                                {icon}
+                                <span className='hidden sm:inline'>
+                                    {label}
+                                </span>
 
-    ))
+                            </button>
 
-}
+                        ))
+
+                    }
 
 
                 </div>
@@ -546,7 +554,7 @@ useState('all')
                     </div>
 
                 </div>
-{/* <SellerDashboard /> */}
+                {/* <SellerDashboard /> */}
 
 
 
