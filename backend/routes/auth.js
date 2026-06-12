@@ -307,6 +307,9 @@ router.post('/forget-password', async (req, res) => {
 })
 
 
+
+
+
 //Update passwordxrs
 router.put('/reset-password', async (req, res) => {
 
@@ -342,7 +345,6 @@ router.put('/reset-password', async (req, res) => {
         user.password = hashedPassword
 
         await user.save()
-
         res.json({
             message: 'Password Reset Successfully'
         })
