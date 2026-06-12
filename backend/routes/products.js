@@ -37,7 +37,6 @@ router.put('/:id', auth, isSeller, async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: 'Product not found' })
         }
-        // Enforce ownership: only the creator of the product (or admin) can edit it
         if (req.user.role !== 'admin' && String(product.sellerId) !== req.user.id) {
             return res.status(403).json({ message: 'Access Denied: Product ownership mismatch' })
         }

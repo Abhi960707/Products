@@ -451,6 +451,8 @@ const Dashboard = () => {
                                 // width:'20px'
                             }
 
+                           
+
                         ].map(({ icon, label, path, color }) => (
 
                             <button
@@ -462,6 +464,7 @@ const Dashboard = () => {
                                 {icon}
                                 <span className='hidden sm:inline'>
                                     {label}
+                                    
                                 </span>
 
                             </button>

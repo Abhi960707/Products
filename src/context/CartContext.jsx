@@ -2,14 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import api from '../api/axiosInstance'
 import { useAuth } from './AuthContext'
 
-/**
- * CartContext
- *
- * Provides cart state and actions across the entire app.
- * - All cart data lives in MongoDB (fetched via /api/cart)
- * - Nothing stored in localStorage except the auth token
- * - Re-fetches cart whenever the user logs in/out
- */
+
 
 const CartContext = createContext()
 
@@ -19,10 +12,8 @@ export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([])
     const [cartLoading, setCartLoading] = useState(false)
 
-    // ── Derived count for badge display ──────────────────
     const cartCount = cart.reduce((total, item) => total + item.quantity, 0)
 
-    // ── Fetch cart from DB whenever user changes ─────────
     useEffect(() => {
 
         if (token) {
@@ -32,8 +23,7 @@ export const CartProvider = ({ children }) => {
         }
 
     }, [token])
-
-    // ── Fetch cart from backend ───────────────────────────
+//fetche
     const fetchCart = async () => {
 
         try {
@@ -54,8 +44,7 @@ export const CartProvider = ({ children }) => {
         }
 
     }
-
-    // ── Add item to cart ──────────────────────────────────
+//add items
     const addToCart = async (product, quantity = 1) => {
 
         try {
@@ -85,7 +74,6 @@ export const CartProvider = ({ children }) => {
 
     }
 
-    // ── Remove item from cart ─────────────────────────────
     const removeFromCart = async (productId) => {
 
         try {
@@ -102,11 +90,9 @@ export const CartProvider = ({ children }) => {
 
     }
 
-    // ── Update quantity of a cart item ────────────────────
     const updateQuantity = async (productId, quantity) => {
 
         if (quantity < 1) {
-            // Remove item if quantity drops to 0
             return removeFromCart(productId)
         }
 
@@ -126,7 +112,6 @@ export const CartProvider = ({ children }) => {
         }
     }
 
-    // ── Clear entire cart ─────────────────────────────────
     const clearCart = async () => {
 
         try {
@@ -161,5 +146,4 @@ export const CartProvider = ({ children }) => {
 
 }
 
-// Custom hook for convenience
 export const useCart = () => useContext(CartContext)

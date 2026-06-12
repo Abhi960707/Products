@@ -46,13 +46,8 @@ router.post('/register', async (req, res) => {
 
 //Create Shopkeeper
 router.post(
-    '/create-shopkeeper',
-    auth,
-    isAdmin,
-    async (req, res) => {
-
+    '/create-shopkeeper', auth, isAdmin, async (req, res) => {
         try {
-
             const {
                 name,
                 email,
@@ -101,9 +96,12 @@ router.post('/login', async (req, res) => {
 
         const user = await User.findOne({ email })
 
-       {/* console.log("EMAIL =", email)
-        console.log("USER =", user)  */}
+        // console.log("EMAIL =", email)
+        // console.log("Email", user)
+        {/* console.log(user)*/}
+     console.log("EmailAre:", email , "PAssword Are:" ,password)
 
+       
         if (!user) {
 
             return res.status(400).json({
@@ -209,7 +207,7 @@ router.put('/change-password', auth, async (req, res) => {
     catch (error) {
 
         res.status(500).json({
-            message: 'Server Error'
+            message: 'Password not changed try again!'
         })
 
     }
@@ -238,8 +236,8 @@ router.get('/profile', auth, async (req, res) => {
     }
 })
 
+{/*
 
-//
 router.post('/forget-passkey',async (req,res)=>{
     try {
         const {email}=req.body
@@ -254,7 +252,14 @@ res.status(200).json({
     }
 })
 
-//routes
+*/}
+// routes
+
+
+
+
+
+
 
 
 router.post('/forget-password', async (req, res) => {
@@ -384,5 +389,32 @@ router.get('/admin-stats', auth, isAdmin, async (req, res) => {
         res.status(500).json({ message: 'Server Error' })
     }
 })
+
+//Delete Shopkeeper 
+router.delete('/delete-shopkeeper/:id',auth,isAdmin,async (req,res)=>{
+    try {
+        const {id} =req.params
+        const user =await User.findById(id)
+        if(!user){
+return res.status(404).json({
+message:"Shopkeeper Not found"
+})
+        }
+        await User.findByIdAndDelete(id)
+        res.status(200).json({
+            message:"Shopkeeper Deleted Successfully !"
+        })
+        console.log(user)
+    } catch (error) {
+        console.log(error)
+    res.status(500).json({
+    message:"Shopkeeper Not Delete"
+    })        
+    }
+})
+
+
+
+
 
 module.exports = router

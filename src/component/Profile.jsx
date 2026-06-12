@@ -33,7 +33,7 @@ const Profile = () => {
 
     const handleLogout = () => {
 
-        logout() // clears token + user state, no reload needed
+        logout()
         navigate('/login')
 
     }
@@ -41,7 +41,6 @@ const Profile = () => {
     const changePassword = async () => {
 
         try {
-
             if (
                 !currentPassword ||
                 !newPassword ||
@@ -57,33 +56,23 @@ const Profile = () => {
 
                 alert('Password Must Be At Least 4 Characters')
                 return
-
             }
-
             if (newPassword !== confirmPassword) {
-
                 alert('Passwords Not Match')
                 return
-
             }
 
             const res = await api.put(
-
                 '/auth/change-password',
-
                 {
                     currentPassword,
                     newPassword
                 }
-
             )
-
             alert(res.data.message)
-
             setCurrentPassword('')
             setNewPassword('')
             setConfirmPassword('')
-
             setShowPopup(false)
 
         }

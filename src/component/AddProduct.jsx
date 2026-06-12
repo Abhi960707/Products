@@ -208,11 +208,11 @@ ${openSidebar ? 'ml-[75%] sm:ml-64' : 'ml-0'}`}
 
                 <div className=' bg-gray-200'>
                     <button
-                        onClick={() => navigate('/home')}
+                        onClick={() => navigate('/seller-dashboard')}
                         className=' cursor-pointer text-blue-500 px-4 py-1 rounded-xl to-transparent '
                     >
                         <FaArrowLeft className='inline mr-2 ' />
-                        Back to Home
+                        Back to Dashboard
 
                     </button>
                     <form

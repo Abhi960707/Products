@@ -54,13 +54,10 @@ export const AuthProvider = ({ children }) => {
                 dispatch(reduxLogout())
                 setToken(null)
                 setUser(null)
-
+                
             } finally {
-
                 setLoading(false)
-
             }
-
         }
 
         fetchProfile()
@@ -95,7 +92,6 @@ export const AuthProvider = ({ children }) => {
         dispatch(reduxLogout())
         setToken(null)
         setUser(null)
-        // No window.location.reload() needed — state change triggers re-render
 
     }
 

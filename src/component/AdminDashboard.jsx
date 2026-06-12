@@ -4,6 +4,7 @@ import { FaUserCircle, FaStore, FaBox, FaUsers, FaUserPlus, FaUser } from 'react
 import Sidebar from './Sidebar'
 import api from '../api/axiosInstance'
 import { useAuth } from '../context/AuthContext'
+import { MdDelete } from 'react-icons/md'
 
 const AdminDashboard = () => {
     const navigate = useNavigate()
@@ -17,6 +18,18 @@ const AdminDashboard = () => {
     })
     const [recentShopkeepers, setRecentShopkeepers] = useState([])
     const [loading, setLoading] = useState(true)
+
+const handleDelete =async (id)=>{
+
+    try {
+    await api.delete(`/auth/delete-shopkeeper/${id}`)
+
+    alert('Shopkeeper Deleted Successfully!')
+    } catch (error) {
+        console.log(error)
+        alert('Failed to Delete Shoppkeeper! Try Again')
+    }
+}
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -49,7 +62,7 @@ const AdminDashboard = () => {
             >
                 {/* Navbar */}
                 <nav className='bg-gradient-to-r from-slate-400 to-slate-600 text-white px-4 py-3 flex justify-between items-center shadow-lg sticky top-0 z-50'>
-                {/* <nav className=' border-b border-slate-700/50 px-6 py-4 flex justify-between items-center shadow-2xl sticky top-0 z-50'> */}
+                    {/* <nav className=' border-b border-slate-700/50 px-6 py-4 flex justify-between items-center shadow-2xl sticky top-0 z-50'> */}
                     <div className='flex items-center gap-3'>
                         <button
                             onClick={(e) => {
@@ -117,7 +130,7 @@ const AdminDashboard = () => {
                                 <div className='bg-slate-400 rounded-2xl p-6 shadow-lg hover:border-indigo-500/50 transition-all duration-300'>
                                     <div className='flex justify-between items-center'>
                                         <div>
-                                            <p className='text-slate-400 font-medium text-sm'>Total Shopkeepers</p>
+                                            <p className=' font-medium  text-sm'>Total Shopkeepers</p>
                                             <h3 className='text-3xl font-black text-white mt-2'>{stats.totalShopkeepers}</h3>
                                         </div>
                                         <div className='bg-indigo-500/10 p-3.5 rounded-xl border border-indigo-500/20'>
@@ -130,11 +143,11 @@ const AdminDashboard = () => {
                                 <div className='bg-slate-400 rounded-2xl p-6 shadow-lg hover:border-emerald-500/50 transition-all duration-300'>
                                     <div className='flex justify-between items-center'>
                                         <div>
-                                            <p className='text-slate-400 font-medium text-sm'>Total Products</p>
+                                            <p className=' font-medium text-sm'>Total Products</p>
                                             <h3 className='text-3xl font-black text-white mt-2'>{stats.totalProducts}</h3>
                                         </div>
-                                        <div className='bg-emerald-500/10 p-3.5 rounded-xl border border-emerald-500/20'>
-                                            <FaStore className='text-2xl text-emerald-400' />
+                                        <div className='bg-green-500/10 p-3.5 rounded-xl border border-emerald-500/20'>
+                                            <FaStore className='text-2xl text-green-400' />
                                         </div>
                                     </div>
                                 </div>
@@ -143,11 +156,11 @@ const AdminDashboard = () => {
                                 <div className='bg-slate-400 rounded-2xl p-6 shadow-lg hover:border-amber-500/50 transition-all duration-300'>
                                     <div className='flex justify-between items-center'>
                                         <div>
-                                            <p className='text-slate-400 font-medium text-sm'>Total Orders</p>
+                                            <p className=' font-medium text-sm'>Total Orders</p>
                                             <h3 className='text-3xl font-black text-white mt-2'>{stats.totalOrders}</h3>
                                         </div>
-                                        <div className='bg-amber-500/10 p-3.5 rounded-xl border border-amber-500/20'>
-                                            <FaBox className='text-2xl text-amber-400' />
+                                        <div className='bg-yellow-500/10 p-3.5 rounded-xl border border-yellow-500/20'>
+                                            <FaBox className='text-2xl text-yellow-400' />
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +168,7 @@ const AdminDashboard = () => {
 
                             {/* Recent Shopkeepers Table */}
                             <div className='text-black rounded-3xl p-6 shadow-xl bg-sky-200'>
-                                <h3 className='text-xl font-bold text mb-6'>Recent Shopkeeper Registrations</h3> 
+                                <h3 className='text-xl font-bold text mb-6'>Recent Shopkeeper Registrations</h3>
                                 <div className='overflow-x-auto text-black'>
                                     <table className='w-full text-left border-collapse text-black'>
                                         <thead>
@@ -163,21 +176,37 @@ const AdminDashboard = () => {
                                                 <th className='pb-4 pl-4'>Name</th>
                                                 <th className='pb-4'>Email</th>
                                                 <th className='pb-4'>Role</th>
-                                                <th className='pb-4 pr-4 text-right'>Status</th>
+                                                <th className='pb-4 '>Status</th>
+                                                <th className='pb-4'>Action</th>
+                                    
+                                              
                                             </tr>
                                         </thead>
                                         <tbody className='divide-y divide-slate-800 text-sm'>
                                             {recentShopkeepers.length > 0 ? (
-                                                recentShopkeepers.map((sk) => (
+                                                recentShopkeepers.map((sk) => 
+                                                    (
+                                                    // console.log(user._id)
                                                     <tr key={sk._id} className=' text-black'>
+                                                        {/* <td>{user.id}</td> */}
                                                         <td className='py-4 pl-4 font-semibold '>{sk.name}</td>
                                                         <td className='py-4 '>{sk.email}</td>
                                                         <td className='py-4  font-mono'>{sk.role}</td>
-                                                        <td className='py-4 pr-4 text-right'>
+                                                        <td className='py-4 '>
                                                             <span className=' text-green-500 border px-2.5 py-1 rounded-full text-xs font-semibold'>
                                                                 Active Seller
                                                             </span>
                                                         </td>
+                                                          <td className='py-4'>
+                                                    <button
+                                                        onClick={() => handleDelete(sk._id)}
+                                                        className='bg-red-400  text-white hover:text-black hover:bg-red-600 px-3 py-2 rounded'
+                                                    >
+                                                       <MdDelete />
+                                                    </button>
+                                                </td>
+                                                       
+
                                                     </tr>
                                                 ))
                                             ) : (

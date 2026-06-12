@@ -11,7 +11,7 @@ import Dashboard from './component/Dashboard'
 import AddProduct from './component/AddProduct'
 import SellerDashboard from './component/SellerDashboard'
 import ShopRegister from './component/ShopRegister'
-import ForgetPassword from './component/ForgetPassword' 
+import ForgetPassword from './component/ForgetPassword'
 import AdminDashboard from './component/AdminDashboard'
 import AdminRoute from './component/AdminRoute'
 import SellerRoute from './component/SellerRoute'
@@ -74,13 +74,11 @@ const PublicRoute = ({ children }) => {
 
 }
 
-// AppRoutes: defined inside providers so useAuth() works
 
 const AppRoutes = () => {
 
     return (
         <Routes>
-            {/* Root redirect — logged-in users see products, others go to login */}
             <Route
                 path='/'
                 element={
@@ -88,7 +86,6 @@ const AppRoutes = () => {
                 }
             />
 
-            {/* Public routes */}
             <Route
                 path='/login'
                 element={
@@ -109,27 +106,27 @@ const AppRoutes = () => {
 
             {/* Shop Regstration pageroute */}
             <Route
-            path='/shop-register'
-            element={
-             
-                <AdminRoute>
-                    <ShopRegister />
-                </AdminRoute>
-                
-            }
-/>
+                path='/shop-register'
+                element={
 
-{/* Forget password */}
-<Route
-path='/forget-password'
-element= {
-             
-                <PublicRoute>
-                    <ForgetPassword />
-                </PublicRoute>
-                
-            }
-/>
+                    <AdminRoute>
+                        <ShopRegister />
+                    </AdminRoute>
+
+                }
+            />
+
+            {/* Forget password */}
+            <Route
+                path='/forget-password'
+                element={
+
+                    <PublicRoute>
+                        <ForgetPassword />
+                    </PublicRoute>
+
+                }
+            />
 
             <Route
                 path='/Dashboard'
@@ -204,7 +201,7 @@ element= {
                 }
             />
 
-             {/* <Route
+            {/* <Route
                 path='/my-products'
                 element={
                     <ProtectedRoute>
@@ -222,16 +219,22 @@ element= {
                 }
             />
 
+            <Route
+            path='/delete-shopkeeper/:id'
+            element={
+                <AdminRoute>
+                    <AdminDashboard />
+                </AdminRoute>
+            }
+        />
+
         </Routes>
 
     )
 
 }
 
-// ─────────────────────────────────────────────────────────
-// App: wraps everything with AuthProvider → CartProvider
-// CartProvider depends on AuthContext, so order matters.
-// ─────────────────────────────────────────────────────────
+
 function App() {
 
     return (
@@ -241,7 +244,7 @@ function App() {
                 <CartProvider>
                     <AppRoutes />
                 </CartProvider>
-            </AuthProvider>
+        </AuthProvider>
         </BrowserRouter>
 
     )

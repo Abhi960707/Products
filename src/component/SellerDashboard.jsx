@@ -36,23 +36,14 @@ const SellerDashboard = () => {
     const fetchSellerProducts = async () => {
 
         try {
-
             const response = await api.get('/products/seller')
-
             setProducts(response.data)
-
             setLoading(false)
-
         }
-
         catch (error) {
-
             console.log(error)
-
             setLoading(false)
-
         }
-
     }
 
     //Edit Product
@@ -74,11 +65,12 @@ const SellerDashboard = () => {
             await api.delete(`/products/${id}`)
 
             fetchSellerProducts()
+            alert('Product DeletedSuccessfully! ')
 
         }
 
         catch (error) {
-
+alert('Failed to delete Producttry again!')
             console.log(error)
 
         }
@@ -90,13 +82,9 @@ const SellerDashboard = () => {
     const totalSales =
 
         products.reduce(
-
             (total, product) =>
-
                 total +
-
                 (product.price * product.sold),
-
             0
 
         )
